@@ -22,7 +22,7 @@ if [ -n "$PF_DEST_IP" ] && [ -n "$FWD_IFACE" ]; then
 fi
 
 # Map port to another fixed port
-if [ -n "$MAP_PORT"]; then
+if [ -n "$MAP_PORT" ]; then
   iptables -A INPUT -i wg0 -p tcp --dport "$MAP_PORT" -j ACCEPT
   iptables -A INPUT -i wg0 -p udp --dport "$MAP_PORT" -j ACCEPT
   echo "$(date): Allowing incoming traffic on map port $MAP_PORT"
