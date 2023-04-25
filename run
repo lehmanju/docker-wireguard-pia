@@ -198,7 +198,7 @@ if [ $FIREWALL -eq 1 ]; then
   iptables -D OUTPUT -p tcp --dport 1337 -j ACCEPT
 
   # Allow docker network input/output
-  for eth in /sys/class/net/eth*; do
+  for eth in /sys/class/net/tap*; do
     eth="${eth##*/}"
     docker_network="$(ip -o addr show dev "$eth"|
             awk '$3 == "inet" {print $4}')"
@@ -220,11 +220,11 @@ if [ -n "$LOCAL_NETWORK" ]; then
   for range in ${LOCAL_NETWORK//,/ }; do
     if [ $FIREWALL -eq 1 ]; then
       echo "$(date): Allowing network access to $range"
-      iptables -A OUTPUT -o eth0 --destination "$range" -j ACCEPT
-      iptables -A INPUT -i eth0 --source "$range" -j ACCEPT
+      iptables -A OUTPUT -o tap0 --destination "$range" -j ACCEPT
+      iptables -A INPUT -i tap0 --source "$range" -j ACCEPT
     fi
     echo "$(date): Adding route to $range"
-    ip route add "$range" via "$(ip route show 0.0.0.0/0 dev eth0 | cut -d\  -f3)"
+    ip route add "$range" via "$(ip route show 0.0.0.0/0 dev tap0 | cut -d\  -f3)"
   done
 fi
 
